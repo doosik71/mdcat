@@ -67,3 +67,33 @@ The default is `dark`. If you want to change colors, edit the element palette co
 cargo test
 cargo run -- sample.md
 ```
+
+## Release Build
+
+Build an optimized binary with:
+
+```bash
+cargo build --release
+```
+
+The binary will be available at:
+
+```bash
+target/release/mdcat
+```
+
+## Installation
+
+Install `mdcat` into your Cargo bin directory with:
+
+```bash
+cargo install --path .
+```
+
+This places the executable in Cargo's bin directory, typically:
+
+```bash
+~/.cargo/bin/mdcat
+```
+
+If you prefer to install manually after a release build, copy the binary from `target/release/mdcat` to a directory on your `PATH`.
