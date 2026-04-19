@@ -6,6 +6,9 @@ use pulldown_cmark::{Alignment, Event, HeadingLevel, Options, Parser, Tag, TagEn
 use terminal_size::{terminal_size, Width};
 use unicode_width::UnicodeWidthChar;
 
+mod stream;
+pub use stream::render_streaming;
+
 const RESET: &str = "\x1b[0m";
 const BOLD: &str = "\x1b[1m";
 const ITALIC: &str = "\x1b[3m";
@@ -16,25 +19,28 @@ const CYAN: &str = "\x1b[36m";
 const GREEN: &str = "\x1b[32m";
 const MAGENTA: &str = "\x1b[35m";
 const YELLOW: &str = "\x1b[33m";
+// const WHITE: &str = "\x1b[37m";
 const BLACK: &str = "\x1b[30m";
 const BRIGHT_BLACK: &str = "\x1b[90m";
 const QUOTE_BG_DARK: &str = "\x1b[48;2;37;41;49m";
 const QUOTE_BG_LIGHT: &str = "\x1b[48;2;239;242;247m";
 const CODE_BG_DARK: &str = "\x1b[48;2;27;31;38m";
 const CODE_BG_LIGHT: &str = "\x1b[48;2;245;246;248m";
-const BG_YELLOW: &str = "\x1b[43m";
+// const BG_BLUE: &str = "\x1b[44m";
+const BG_MAGENTA: &str = "\x1b[45m";
 const BG_GREEN: &str = "\x1b[42m";
+// const BG_PINK: &str = "\x1b[48;5;213m";
 
 // Element palette: edit these constants to change mdcat colors in one place.
-const HEADING_1_DARK_FG: &str = BLACK;
-const HEADING_1_DARK_BG: &str = BG_YELLOW;
+const HEADING_1_DARK_FG: &str = GREEN;
+const HEADING_1_DARK_BG: &str = BG_MAGENTA;
 const HEADING_2_DARK_FG: &str = BLUE;
 const HEADING_3_DARK_FG: &str = GREEN;
 const HEADING_4_DARK_FG: &str = MAGENTA;
 const HEADING_5_DARK_FG: &str = CYAN;
 const HEADING_6_DARK_FG: &str = BLUE;
 
-const HEADING_1_LIGHT_FG: &str = BLACK;
+const HEADING_1_LIGHT_FG: &str = MAGENTA;
 const HEADING_1_LIGHT_BG: &str = BG_GREEN;
 const HEADING_2_LIGHT_FG: &str = BRIGHT_BLACK;
 const HEADING_3_LIGHT_FG: &str = BLUE;

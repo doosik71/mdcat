@@ -4,7 +4,7 @@
 
 `mdcat` is a terminal Markdown renderer.
 
-It behaves like `cat` for a single file input, but renders Markdown in a readable terminal-friendly form rather than printing raw source text.
+It behaves like `cat` for a single file input, and also supports streaming Markdown from stdin, but renders Markdown in a readable terminal-friendly form rather than printing raw source text.
 
 The design goal is to stay compatible with terminals such as Warp by limiting output to plain text plus ANSI SGR styling only. `mdcat` must not use interactive terminal modes, cursor movement, alternate screens, or other complex terminal control sequences.
 
@@ -19,10 +19,12 @@ Common Markdown renderers sometimes rely on terminal behavior that is not consis
 - using ANSI escape codes only for color and emphasis
 - wrapping output to the current terminal width
 - avoiding any terminal control beyond simple styled text output
+- optionally reading Markdown from stdin as a separate block-oriented streaming path
 
 ## 3. Goals
 
 - Accept one file path as input.
+- Accept stdin input when no file path is provided.
 - Render Markdown to readable terminal text.
 - Support terminal-width wrapping for paragraphs and list items.
 - Use ANSI SGR styling for emphasis such as bold, italic, code, and links.
@@ -33,10 +35,8 @@ Common Markdown renderers sometimes rely on terminal behavior that is not consis
 
 - No interactive mode.
 - No pager integration.
-- No stdin input in v1.
 - No multi-file rendering.
 - No terminal UI.
-- No support for tables, footnotes, task lists, or images in v1.
 
 ## 5. v1 Markdown Scope
 
@@ -51,13 +51,12 @@ Supported in the first version:
 - ordered lists
 - blockquotes
 - links
-
-Deferred to v2:
-
 - tables
-- footnotes
 - task lists
 - images
+- footnotes
+
+The stdin streaming path is intentionally block-oriented and may flush conservative block chunks, while file mode continues to use the existing renderer unchanged.
 
 ## 6. CLI Contract
 
@@ -65,6 +64,8 @@ Primary usage:
 
 ```bash
 mdcat <file>
+mdcat
+cat file.md | mdcat
 ```
 
 Optional theme selection:
@@ -76,9 +77,12 @@ mdcat --theme light <file>
 
 Behavior:
 
-- print a usage error if no file is provided
+- read from stdin when no file is provided
+- keep the file-input renderer unchanged
+- use a separate block-oriented streaming pipeline for stdin input and direct stdout output
 - fail if the file cannot be read
 - render the file contents to stdout
+- stream stdin blocks to stdout without requiring the whole document to be buffered
 - wrap output to terminal width when width can be determined
 - default to the `dark` theme
 - accept an explicit `--theme light` or `--theme dark` value
